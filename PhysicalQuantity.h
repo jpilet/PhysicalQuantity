@@ -34,75 +34,74 @@ namespace physical_quantity {
 
 template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity;
 
-
-#define FOREACH_SI_PREFIX(OP, type, name) \
-	OP(type, yotta##name, 1e24, 0) \
-	OP(type, zetta##name, 1e21, 0) \
-	OP(type, exa##name, 1e18, 0) \
-	OP(type, peta##name, 1e15, 0) \
-	OP(type, tera##name, 1e12, 0) \
-	OP(type, giga##name, 1e9, 0) \
-	OP(type, mega##name, 1e6, 0) \
-	OP(type, kilo##name, 1e3, 0) \
-	OP(type, name, 1.0, 0) \
-	OP(type, milli##name, 1e-3, 0) \
-	OP(type, micro##name, 1e-6, 0) \
-	OP(type, nano##name, 1e-9, 0) \
-	OP(type, pico##name, 1e-12, 0) \
-	OP(type, femto##name, 1e-15, 0) \
-	OP(type, atto##name, 1e-18, 0) \
-	OP(type, zepto##name, 1e-21, 0) \
-	OP(type, yocto##name, 1e-24, 0)
-
-#define PREFIX_TIME(name, factor) OP(Time, name ## seconds, factor)
+// Factor is necessary because SI base unit for mass is kg, not g.
+#define FOREACH_SI_PREFIX(OP, type, name, factor) \
+	OP(type, yotta##name, (1e24 * factor), 0) \
+	OP(type, zetta##name, (1e21 * factor), 0) \
+	OP(type, exa##name, (1e18 * factor), 0) \
+	OP(type, peta##name, (1e15 * factor), 0) \
+	OP(type, tera##name, (1e12 * factor), 0) \
+	OP(type, giga##name, (1e9 * factor), 0) \
+	OP(type, mega##name, (1e6 * factor), 0) \
+	OP(type, kilo##name, (1e3 * factor), 0) \
+	OP(type, name, (factor), 0) \
+	OP(type, milli##name, (1e-3 * factor), 0) \
+	OP(type, micro##name, (1e-6 * factor), 0) \
+	OP(type, nano##name, (1e-9 * factor), 0) \
+	OP(type, pico##name, (1e-12 * factor), 0) \
+	OP(type, femto##name, (1e-15 * factor), 0) \
+	OP(type, atto##name, (1e-18 * factor), 0) \
+	OP(type, zepto##name, (1e-21 * factor), 0) \
+	OP(type, yocto##name, (1e-24 * factor), 0)
 
 // OP(type, name, factor)
 #define FOREACH_TIME_UNIT(OP) \
-    FOREACH_SI_PREFIX(OP, Time, seconds) \
-    OP(Time, minutes, 60.0, 0) \
-    OP(Time, hours, 3600.0, 0) \
-    OP(Time, days, 24*3600.0, 0) \
-    OP(Time, weeks, 7*24*3600.0, 0)
+    FOREACH_SI_PREFIX(OP, Time, second, 1) \
+    OP(Time, minute, 60.0, 0) \
+    OP(Time, hour, 3600.0, 0) \
+    OP(Time, day, 24*3600.0, 0) \
+    OP(Time, week, 7*24*3600.0, 0)
 
 #define FOREACH_LENGTH_UNIT(OP) \
-  FOREACH_SI_PREFIX(OP, Length, meters) \
-  OP(Length, nauticalMiles, 1852.0, 0) // 1 nautical mile = 1852.0 m
+  FOREACH_SI_PREFIX(OP, Length, meter, 1) \
+  OP(Length, nauticalMile, 1852.0, 0) // 1 nautical mile = 1852.0 m
 
 #define FOREACH_ANGLE_UNIT(OP) \
-  OP(Angle, radians, 1.0, 0) \
-  OP(Angle, degrees, 6.28318530718/360.0, 0) // 1 degree = M_PI/180 radians <=> 180 degrees = M_PI radians
-
-#define FOREACH_VELOCITY_UNIT(OP) \
-  OP(Velocity, metersPerSecond, 1.0, 0) \
-  OP(Velocity, knots, 1852.0/3600.0, 0) \
-  OP(Velocity, kilometersPerHour, 1000.0/3600.0, 0) \
-  OP(Velocity, milesPerHour, 1609.0/3600.0, 0)
-
-#define FOREACH_ACCELERATION_UNIT(OP) \
-  OP(Acceleration, metersPerSecondSquared, 1.0, 0)
+  OP(Angle, radian, 1.0, 0) \
+  OP(Angle, degree, 6.28318530718/360.0, 0) // 1 degree = M_PI/180 radians <=> 180 degrees = M_PI radians
 
 #define FOREACH_MASS_UNIT(OP) \
-  FOREACH_SI_PREFIX(OP, Mass, grams) \
-  OP(Mass, skeppund, 170.0 * 1000, 0) \
-  OP(Mass, lispund, (170.0 * 1000)/20, 0)
+  FOREACH_SI_PREFIX(OP, Mass, gram, 1000) \
+  OP(Mass, skeppund, 170.0 , 0) \
+  OP(Mass, lispund, (170.0)/20, 0)
 
 #define FOREACH_ANGULAR_VELOCITY_UNIT(OP) \
-  OP(AngularVelocity, radiansPerSecond, 1.0, 0) \
-  OP(AngularVelocity, degreesPerSecond, 6.28318530718/360.0, 0) \
+  OP(AngularVelocity, radianPerSecond, 1.0, 0) \
+  OP(AngularVelocity, degreePerSecond, 6.28318530718/360.0, 0) \
   OP(AngularVelocity, rpm, 6.28318530718 / 60.0, 0) // 1 rpm = 2 * pi rad in 60 sec.
 
 #define FOREACH_ELECTRIC_CURRENT_UNIT(OP) \
-  FOREACH_SI_PREFIX(OP, ElectricCurrent, ampere)
+  FOREACH_SI_PREFIX(OP, ElectricCurrent, ampere, 1)
 
 #define FOREACH_TEMPERATURE_UNIT(OP) \
   OP(Temperature, kelvin, 1, 0) \
-  OP(Temperature, celsius, 1, 273.15)
+  OP(Temperature, celsius, 1, 273.15) \
+  OP(Temperature, farenheit, (5.0/9.0), ((5.0/9.0) * 459.67))
 
 #define FOREACH_AMOUNT_OF_SUBSTANCE_UNIT(OP) \
   OP(AmountOfSubstance, mole, 1, 0)
 
 #define FOREACH_LUMINOUS_INTENSITY_UNIT(OP) \
   OP(LuminousIntensity, candela, 1, 0)
+
+#define FOREACH_VELOCITY_UNIT(OP) \
+  OP(Velocity, meterPerSecond, 1.0, 0) \
+  OP(Velocity, knot, 1852.0/3600.0, 0) \
+  OP(Velocity, kilometerPerHour, 1000.0/3600.0, 0) \
+  OP(Velocity, milePerHour, 1609.0/3600.0, 0)
+
+#define FOREACH_ACCELERATION_UNIT(OP) \
+  OP(Acceleration, meterPerSecondSquared, 1.0, 0)
 
 #define FOREACH_UNIT(OP) \
   FOREACH_TIME_UNIT(OP) \
@@ -115,20 +114,55 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   FOREACH_ELECTRIC_CURRENT_UNIT(OP) \
   FOREACH_TEMPERATURE_UNIT(OP) \
   FOREACH_AMOUNT_OF_SUBSTANCE_UNIT(OP) \
-  FOREACH_LUMINOUS_INTENSITY_UNIT(OP)
+  FOREACH_LUMINOUS_INTENSITY_UNIT(OP) \
+  OP(Frequency, herz, 1, 0) \
+  OP(Frequency, becquerel, 1, 0) \
+  OP(Force, newton, 1, 0) \
+  OP(Pressure, pascal, 1, 0) \
+  OP(Energy, joule, 1, 0) \
+  OP(Power, watt, 1, 0) \
+  OP(ElectricCharge, coulomb, 1, 0) \
+  OP(Voltage, volt, 1, 0) \
+  OP(Capacitance, farad, 1, 0) \
+  OP(Resistance, ohm, 1, 0) \
+  OP(ElectricalConductance, siemens, 1, 0) \
+  OP(MagneticFlux, weber, 1, 0) \
+  OP(MagneticFluxDensity, tesla, 1, 0) \
+  OP(Inductance, henry, 1, 0) \
+  OP(Illuminance, lux, 1, 0) \
+  OP(AbsorbedDose, gray, 1, 0) \
+  OP(CatalyticActivity, katal, 1, 0)
 
+//                               s  m    kg  K  A mol cd
 #define FOREACH_QUANTITY(OP) \
-  OP(Time, seconds,              1, 0, 0, 0, 0, 0, 0, 0) \
-  OP(Length, meters,             0, 1, 0, 0, 0, 0, 0, 0) \
-  OP(Angle, radians,             0, 0, 1, 0, 0, 0, 0, 0) \
-  OP(Mass, kilograms,            0, 0, 0, 1, 0, 0, 0, 0) \
+  OP(Time, second,               1, 0, 0, 0, 0, 0, 0, 0) \
+  OP(Length, meter,              0, 1, 0, 0, 0, 0, 0, 0) \
+  OP(Angle, radian,              0, 0, 1, 0, 0, 0, 0, 0) \
+  OP(Mass, kilogram,             0, 0, 0, 1, 0, 0, 0, 0) \
   OP(Temperature, kelvin,        0, 0, 0, 0, 1, 0, 0, 0) \
   OP(ElectricCurrent, ampere,    0, 0, 0, 0, 0, 1, 0, 0) \
   OP(AmountOfSubstance, mole,    0, 0, 0, 0, 0, 0, 1, 0) \
   OP(LuminousIntensity, candela, 0, 0, 0, 0, 0, 0, 0, 1) \
-  OP(AngularVelocity, radiansPerSecond, -1, 0, 1, 0, 0, 0, 0, 0) \
-  OP(Velocity, metersPerSecond, -1, 1, 0, 0, 0, 0, 0, 0) \
-  OP(Acceleration, metersPerSecondSquared, -2, 1, 0, 0, 0, 0, 0, 0)
+  OP(AngularVelocity, radianPerSecond, -1, 0, 1, 0, 0, 0, 0, 0) \
+  OP(Velocity, meterPerSecond, -1, 1, 0, 0, 0, 0, 0, 0) \
+  OP(Acceleration, meterPerSecondSquared, -2, 1, 0, 0, 0, 0, 0, 0) \
+  OP(Frequency, herz,           -1, 0, 0, 0, 0, 0, 0, 0) \
+  OP(Force, newton,             -2, 1, 0, 1, 0, 0, 0, 0) \
+  OP(Pressure, pascal,          -2,-1, 0, 1, 0, 0, 0, 0) \
+  OP(Energy, joule,             -2, 2, 0, 1, 0, 0, 0, 0) \
+  OP(Power, watt,               -3, 2, 0, 1, 0, 0, 0, 0) \
+  OP(ElectricCharge, coulomb,    1, 0, 0, 0, 0, 1, 0, 0) \
+  OP(Voltage, volt,             -3, 2, 0, 1, 0,-1, 0, 0) \
+  OP(Capacitance, farad,         4,-2, 0,-1, 0, 2, 0, 0) \
+  OP(Resistance, ohm,           -3, 2, 0, 1, 0,-2, 0, 0) \
+  OP(ElectricalConductance, siemens,  3,-2, 0,-1, 0, 2, 0, 0) \
+  OP(MagneticFlux, weber,       -2, 2, 0, 1, 0,-1, 0, 0) \
+  OP(MagneticFluxDensity, tesla,-2, 0, 0, 1, 0,-1, 0, 0) \
+  OP(Inductance, henry,         -2, 2, 0, 1, 0,-2, 0, 0) \
+  OP(Illuminance, lux,           0,-2, 0, 0, 0, 0, 0, 1) \
+  OP(AbsorbedDose, gray,        -2, 2, 0, 0, 0, 0, 0, 0) \
+  OP(CatalyticActivity, katal,  -1, 2, 0, 0, 0, 0, 1, 0)
+
 
 enum class Quantity {
   // Any quantity that has not been declared maps to this one.
@@ -228,9 +262,9 @@ FOREACH_QUANTITY(MAKE_SI_UNIT)
 
   // Suitable for integer and fixed-point representation
   struct CustomAnemoUnits : public SI {
-    static const Unit Time = Unit::milliseconds;
-    static const Unit Angle = Unit::degrees;
-    static const Unit Velocity = Unit::knots;
+    static const Unit Time = Unit::millisecond;
+    static const Unit Angle = Unit::degree;
+    static const Unit Velocity = Unit::knot;
   };
 };
 
@@ -391,7 +425,7 @@ public:
 
   void sincos(T *sinAngle, T *cosAngle) const {
     static_assert(UInfo::quantity == Quantity::Angle, "Only applicable to angles");
-    T rad = radians();
+    T rad = radian();
     *sinAngle = sin(rad);
     *cosAngle = cos(rad);
   }
@@ -426,9 +460,34 @@ struct Division {
   typedef PhysicalQuantity<T, sys, t1, l1, a1, m1, T1, I1, N1, J1> DenominatorType;
 
   static DstType apply(const NumeratorType &a, const DenominatorType &b) {
-    T aValue = a.getSI();
-    T bValue = b.getSI();
-    return DstType::makeFromSI(aValue/bValue);
+    constexpr double fa = NumeratorType::UInfo::getFactor();
+    constexpr double oa = NumeratorType::UInfo::getOffset();
+    constexpr double fb = DenominatorType::UInfo::getFactor();
+    constexpr double ob = DenominatorType::UInfo::getOffset();
+    constexpr double fd = DstType::UInfo::getFactor();
+    constexpr double od = DstType::UInfo::getOffset();
+
+    // Basically, si = f * x + o converts a unit to its SI equivalent.
+    // Then, to convert back to the wanted unit, we need to do the inverse:
+    //  x = (si - o) / f
+    //
+    //  So.. we convert to SI first, do the division, then convert back.
+    //
+    //  ((fa * a + oa) / (fb * b + ob) - od) / fd
+    //
+    //  Of course, we want to compute as much as possible at compile time.
+    //  So we rewrite:
+    //
+    //  (fa *(a + oa / fa) / (fb * (b + ob / fb))) / fd - od / fd
+    //  (fa / (fb * fd)) * ((a + oa / fa) / (b + ob / fb)) - od / fd
+    //
+    //  which leave us with just 1 division and 1 multiplication
+    //  (plus 3 additions if offsets are not null)
+    constexpr T f(fa / (fb * fd));
+    constexpr T o(- od / fd);
+    T numerator = a.get<NumeratorType::UInfo::unit>();
+    T denominator = b.get<DenominatorType::UInfo::unit>();
+    return DstType::wrap(f * (numerator + (oa / fa)) / (denominator + (ob / fb)) + o);
   }
 };
 
@@ -484,51 +543,27 @@ template <typename T>
 using TimeDerivative = Per<T,
     PhysicalQuantity<typename T::ValueType, typename T::SystemType, 1, 0, 0, 0, 0, 0, 0, 0>>;
 
-// http://en.cppreference.com/w/cpp/language/type_alias
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Dimensionless = PhysicalQuantity<T, System, 0, 0, 0, 0, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Duration = PhysicalQuantity<T, System, 1, 0, 0, 0, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Frequency = PhysicalQuantity<T, System, -1, 0, 0, 0, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Length = PhysicalQuantity<T, System, 0, 1, 0, 0, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Velocity = PhysicalQuantity<T, System, -1, 1, 0, 0, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Acceleration = PhysicalQuantity<T, System, -2, 1, 0, 0, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Angle = PhysicalQuantity<T, System, 0, 0, 1, 0, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Mass = PhysicalQuantity<T, System, 0, 0, 0, 1, 0, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using Temperature = PhysicalQuantity<T, System, 0, 0, 0, 0, 1, 0, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using ElectricCurrent = PhysicalQuantity<T, System, 0, 0, 0, 0, 0, 1, 0, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using AmountOfSubstance = PhysicalQuantity<T, System, 0, 0, 0, 0, 0, 0, 1, 0>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using LuminousIntensity = PhysicalQuantity<T, System, 0, 0, 0, 0, 0, 0, 0, 1>;
-
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
-using AngularVelocity = TimeDerivative<Angle<T, System>>;
-
 template <typename T, typename System, QUANTITY_TEMPLATE>
 PhysicalQuantity<T, System, QUANTITY_ARGS> operator*(T s,
     const PhysicalQuantity<T, System, QUANTITY_ARGS> &x) {
   return x*s;
 }
+
+// Definitions for SI base quantities (plus angles)
+
+// http://en.cppreference.com/w/cpp/language/type_alias
+template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
+using Dimensionless = PhysicalQuantity<T, System, 0, 0, 0, 0, 0, 0, 0, 0>;
+
+#define MAKE_TYPE_ALIAS(name, siUnit, t, l, a, m, T, I, N, J) \
+template <typename Storage=double, typename System=UnitSystem::CustomAnemoUnits> \
+using name = PhysicalQuantity<Storage, System, t, l, a, m, T, I, N, J>;
+
+FOREACH_QUANTITY(MAKE_TYPE_ALIAS)
+#undef MAKE_TYPE_ALIAS
+
+template <typename Storage=double, typename System=UnitSystem::CustomAnemoUnits>
+using Duration = Time<Storage, System>;
 
 template <typename T, typename sys, QUANTITY_TEMPLATE>
 std::string physQuantToString(const PhysicalQuantity<T, sys, QUANTITY_ARGS> &x) {
@@ -562,14 +597,16 @@ std::string physQuantToString(const Duration<T, System> &x) {
 #define FORMAT_DURATION_UNIT(unit) \
    if (remaining.unit() >= 1) { \
      if (ss.str().size() > 0) {ss << ", ";} \
-     ss << floor(remaining.unit()) << " " #unit ; \
-     remaining -= Duration<T>::unit(floor(remaining.unit())); \
+     T value(floor(remaining.unit())); \
+     ss << value << " " #unit ; \
+     if (abs(value) >= T(2)) { ss << "s"; } /* plural */ \
+     remaining -= Duration<T>::unit(value); \
    }
-   FORMAT_DURATION_UNIT(weeks)
-   FORMAT_DURATION_UNIT(days)
-   FORMAT_DURATION_UNIT(hours)
-   FORMAT_DURATION_UNIT(minutes)
-   FORMAT_DURATION_UNIT(seconds)
+   FORMAT_DURATION_UNIT(week)
+   FORMAT_DURATION_UNIT(day)
+   FORMAT_DURATION_UNIT(hour)
+   FORMAT_DURATION_UNIT(minute)
+   FORMAT_DURATION_UNIT(second)
 #undef FORMAT_DURATION_UNIT
    return ss.str();
 }
@@ -685,13 +722,13 @@ Vectorize<ElemType, N> operator*(FactorType x, const Vectorize<ElemType, N> &v) 
 
 // Overloading sin and cos must be done outside namespace
 template <typename T, typename System>
-T cos(physical_quantity::Angle<T, System> x) {return cos(x.radians());}
+T cos(physical_quantity::Angle<T, System> x) {return cos(x.radian());}
 
 template <typename T, typename System>
-T sin(physical_quantity::Angle<T, System> x) {return sin(x.radians());}
+T sin(physical_quantity::Angle<T, System> x) {return sin(x.radian());}
 
 template <typename T, typename System>
-T tan(physical_quantity::Angle<T, System> x) {return tan(x.radians());}
+T tan(physical_quantity::Angle<T, System> x) {return tan(x.radian());}
 
 template <typename T, typename s, QUANTITY_TEMPLATE>
 physical_quantity::PhysicalQuantity<T, s, QUANTITY_ARGS> fabs(physical_quantity::PhysicalQuantity<T, s, QUANTITY_ARGS> x) {
@@ -730,15 +767,15 @@ class HorizontalMotion : public Vectorize<Velocity<T, System>, 2> {
 
     // Special implementation, that also works with fixed point, I think.
     Velocity<T, System> norm() const {
-        T a = (*this)[0].knots();
-        T b = (*this)[1].knots();
-        return Velocity<T>::knots(sqrt(a*a + b*b));
+        T a = (*this)[0].knot();
+        T b = (*this)[1].knot();
+        return Velocity<T>::knot(sqrt(a*a + b*b));
     }
 
     Angle<T, System> angle() const {
-        return Angle<T, System>::radians(atan2(
-                (*this)[0].knots(),
-                (*this)[1].knots()));
+        return Angle<T, System>::radian(atan2(
+                (*this)[0].knot(),
+                (*this)[1].knot()));
     }
 
     template <typename Dst>
@@ -792,21 +829,21 @@ typename std::enable_if<std::is_floating_point<T>::value, bool>::type isFinite(T
     return QUANTITY<double>::WHAT(x); \
 }
 
-DEFINE_LITERAL(Angle, degrees, _deg)
-DEFINE_LITERAL(Angle, radians, _rad)
-DEFINE_LITERAL(Length, meters, _m)
-DEFINE_LITERAL(Length, kilometers, _km)
-DEFINE_LITERAL(Length, nauticalMiles, _M)
-DEFINE_LITERAL(Duration, seconds, _s)
-DEFINE_LITERAL(Duration, seconds, _seconds)
-DEFINE_LITERAL(Duration, days, _days)
-DEFINE_LITERAL(Duration, hours, _h)
-DEFINE_LITERAL(Duration, hours, _hours)
-DEFINE_LITERAL(Duration, minutes, _minutes)
-DEFINE_LITERAL(Velocity, metersPerSecond, _mps)
-DEFINE_LITERAL(Velocity, knots, _kn)
-DEFINE_LITERAL(Velocity, knots, _kt)
-DEFINE_LITERAL(Acceleration, metersPerSecondSquared, _mps2)
+DEFINE_LITERAL(Angle, degree, _deg)
+DEFINE_LITERAL(Angle, radian, _rad)
+DEFINE_LITERAL(Length, meter, _m)
+DEFINE_LITERAL(Length, kilometer, _km)
+DEFINE_LITERAL(Length, nauticalMile, _M)
+DEFINE_LITERAL(Duration, second, _s)
+DEFINE_LITERAL(Duration, second, _second)
+DEFINE_LITERAL(Duration, day, _day)
+DEFINE_LITERAL(Duration, hour, _h)
+DEFINE_LITERAL(Duration, hour, _hour)
+DEFINE_LITERAL(Duration, minute, _minute)
+DEFINE_LITERAL(Velocity, meterPerSecond, _mps)
+DEFINE_LITERAL(Velocity, knot, _kn)
+DEFINE_LITERAL(Velocity, knot, _kt)
+DEFINE_LITERAL(Acceleration, meterPerSecondSquared, _mps2)
 #undef DEFINE_LITERAL
 
 }  // namespace physical_quantity
