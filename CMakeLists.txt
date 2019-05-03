@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 project(PhysicalQuantity)
+
+set (CMAKE_CXX_STANDARD 11)
 
 # Copied from https://github.com/Crascit/DownloadProject
 include(CTest)

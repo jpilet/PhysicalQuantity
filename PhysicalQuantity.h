@@ -131,7 +131,10 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(Inductance, henry, 1, 0) \
   OP(Illuminance, lux, 1, 0) \
   OP(AbsorbedDose, gray, 1, 0) \
-  OP(CatalyticActivity, katal, 1, 0)
+  OP(CatalyticActivity, katal, 1, 0) \
+  OP(Area, squareMeter, 1, 0) \
+  OP(Volume, cubicMeter, 1, 0) \
+  OP(Volume, litre, 1000, 0)
 
 //                               s  m    kg  K  A mol cd
 #define FOREACH_QUANTITY(OP) \
@@ -161,7 +164,9 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(Inductance, henry,         -2, 2, 0, 1, 0,-2, 0, 0) \
   OP(Illuminance, lux,           0,-2, 0, 0, 0, 0, 0, 1) \
   OP(AbsorbedDose, gray,        -2, 2, 0, 0, 0, 0, 0, 0) \
-  OP(CatalyticActivity, katal,  -1, 2, 0, 0, 0, 0, 1, 0)
+  OP(CatalyticActivity, katal,  -1, 2, 0, 0, 0, 0, 1, 0) \
+  OP(Area, squareMeter,          0, 2, 0, 0, 0, 0, 0, 0) \
+  OP(Volume, cubicMeter,         0, 3, 0, 0, 0, 0, 0, 0)
 
 
 enum class Quantity {
@@ -395,11 +400,11 @@ public:
     return *this;
   }
 
-  ThisType fabs() const { return ThisType(::fabs(_x)); }
+  ThisType fabs() const;
 
-  bool isNaNQuantity() const { return physical_quantity::isNaN(_x); }
+  bool isNaNQuantity() const;
 
-  bool isFiniteQuantity() const { return physical_quantity::isFinite(_x); }
+  bool isFiniteQuantity() const;
 
   ThisType operator-() const {
     return ThisType(-_x);
@@ -439,13 +444,12 @@ public:
     return strictEquality(_x, other._x);
   }
 
-  bool nearWithNan(ThisType other, double marg) const {
-    return physical_quantity::nearWithNan(_x, other._x, marg);
-  }
-
   operator typename DimensionlessInfo::PublicType() const {
     return DimensionlessInfo::get(_x);
   }
+
+  T getInStoredUnit() const { return _x; }
+
 private:
   PhysicalQuantity(T x) : _x(x) {}
   T _x;
@@ -485,31 +489,9 @@ struct Division {
     //  (plus 3 additions if offsets are not null)
     constexpr T f(fa / (fb * fd));
     constexpr T o(- od / fd);
-    T numerator = a.get<NumeratorType::UInfo::unit>();
-    T denominator = b.get<DenominatorType::UInfo::unit>();
+    T numerator = a.template getInStoredUnit();
+    T denominator = b.template getInStoredUnit();
     return DstType::wrap(f * (numerator + (oa / fa)) / (denominator + (ob / fb)) + o);
-  }
-};
-
-template <typename Storage, typename sys,
-  int t, int l, int a, int m, int T, int I, int N, int J>
-struct Division<Storage, sys,
-	t, l, a, m, T, I, N, J,
-	t, l, a, m, T, I, N, J> {
-  static PhysicalQuantity<Storage, sys, 0, 0, 0, 0, 0, 0, 0, 0>
-    apply(const PhysicalQuantity<Storage, sys, t, l, a, m, T, I, N, J> &A,
-          const PhysicalQuantity<Storage, sys, t, l, a, m, T, I, N, J> &B) {
-    /*
-     *  We have some code out there that divides
-     *  two quantities like this, where T is fixed-point
-     *  or integer. So this specialization avoids the unnecessary
-     *  loss of precision due to first converting it to an SI unit.
-     */
-    static const Unit unit = PhysicalQuantity<Storage, sys, t, l, a, m>::UInfo::unit;
-    T aValue = A.template get<unit>();
-    T bValue = B.template get<unit>();
-    typedef PhysicalQuantity<Storage, sys, 0, 0, 0, 0> DstType;
-    return DstType::dimensionless(aValue/bValue);
   }
 };
 
@@ -735,6 +717,16 @@ physical_quantity::PhysicalQuantity<T, s, QUANTITY_ARGS> fabs(physical_quantity:
   return x.fabs();
 }
 
+template <typename Storage, typename System, int t, int l, int a, int m, int T, int I, int N, int J>
+static physical_quantity::PhysicalQuantity<Storage, System, t / 2, l / 2, a / 2, m / 2, T / 2, I / 2, N / 2, J / 2> sqrt(
+    const physical_quantity::PhysicalQuantity<Storage, System, t, l, a, m, T, I, N, J>& x) {
+  static_assert((t % 2) == 0 && (l % 2) == 0 && (a % 2) == 0
+                && (m  % 2) == 0 && (T % 2) == 0 && (I % 2) == 0
+                && (N % 2) == 0 && (J % 2) == 0, "Can't take the square root of a non square unit.");
+
+  return physical_quantity::PhysicalQuantity<Storage, System, t / 2, l / 2, a / 2, m / 2, T / 2, I / 2, N / 2, J / 2>::wrap(sqrt(x.getInStoredUnit()));
+}
+
 namespace physical_quantity {
 
 template <typename T, typename System = UnitSystem::CustomAnemoUnits>
@@ -822,6 +814,21 @@ typename std::enable_if<std::is_floating_point<T>::value, bool>::type isFinite(T
 	return std::isfinite(x);
 }
 
+template <typename T, typename System, QUANTITY_TEMPLATE>
+PhysicalQuantity<T, System, QUANTITY_ARGS>
+PhysicalQuantity<T, System, QUANTITY_ARGS>::fabs() const {
+  return ThisType(::fabs(_x));
+}
+
+template <typename T, typename System, QUANTITY_TEMPLATE>
+bool PhysicalQuantity<T, System, QUANTITY_ARGS>::isNaNQuantity() const {
+  return physical_quantity::isNaN(_x);
+}
+
+template <typename T, typename System, QUANTITY_TEMPLATE>
+bool PhysicalQuantity<T, System, QUANTITY_ARGS>::isFiniteQuantity() const {
+  return physical_quantity::isFinite(_x);
+}
 
 // Literals
 #define DEFINE_LITERAL(QUANTITY, WHAT, LIT) \

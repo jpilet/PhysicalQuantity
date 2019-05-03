@@ -224,3 +224,7 @@ TEST(PhysQuantTest, Voltage) {
 
   EXPECT_NEAR(u.volt(), (r * i).volt(), 1e-5);
 }
+
+TEST(PhysQuantTest, Sqrt) {
+  Length<double> l = sqrt(Area<>::squareMeter(10 * 10));
+}
