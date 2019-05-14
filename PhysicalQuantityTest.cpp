@@ -9,6 +9,24 @@
 
 using namespace physical_quantity;
 
+TEST(PhysQuantTest, Voltage) {
+	Voltage<> u = Voltage<>::volt(12);
+	Resistance<> r = Resistance<>::ohm(10);
+	ElectricCurrent<> i = ElectricCurrent<>::ampere(1.2);
+
+	EXPECT_NEAR(u.volt(), (r * i).volt(), 1e-5);
+}
+
+TEST(PhysQuantTest, Sqrt) {
+	Length<double> l = sqrt(Area<>::squareMeter(10 * 10));
+	EXPECT_NEAR(l.meter(), 10, 1e-5);
+}
+
+TEST(PhysQuantTest, Multiply) {
+	Length<double> l = Length<double>::meter(42);
+	Area<double> area = l * l;
+	EXPECT_NEAR(area.squareMeter(), 42 * 42, 1e-5);
+}
 
 TEST(PhysQuantTest, ScaleByDimensionless) {
   Dimensionless<double> factor = Dimensionless<double>::dimensionless(2.0);
@@ -83,8 +101,8 @@ TEST(PhysQuantTest, WalkTest) {
   Velocity<double> velB = Velocity<double>::meterPerSecond(length.meter()/time.second());
   Velocity<double> velC = length / time;
 
-  EXPECT_NEAR(velA.knot(), velB.knot(), 1.0e-5);
-  EXPECT_NEAR(velB.meterPerSecond(), velA.meterPerSecond(), 1e-5);
+  EXPECT_NEAR(velA.meterPerSecond(), velB.meterPerSecond(), 1.0e-5);
+  EXPECT_NEAR(velA.meterPerSecond(), velC.meterPerSecond(), 1.0e-5);
 }
 
 TEST(PhysQuantTest, AngleTest) {
@@ -217,14 +235,3 @@ TEST(PhysQuantTest, TemperatureTest) {
   EXPECT_NEAR(Temperature<>::farenheit(123).celsius(), 50.555, 1e-3);
 }
 
-TEST(PhysQuantTest, Voltage) {
-  Voltage<> u = Voltage<>::volt(12);
-  Resistance<> r = Resistance<>::ohm(10);
-  ElectricCurrent<> i = ElectricCurrent<>::ampere(1.2);
-
-  EXPECT_NEAR(u.volt(), (r * i).volt(), 1e-5);
-}
-
-TEST(PhysQuantTest, Sqrt) {
-  Length<double> l = sqrt(Area<>::squareMeter(10 * 10));
-}

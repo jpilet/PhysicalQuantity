@@ -489,8 +489,8 @@ struct Division {
     //  (plus 3 additions if offsets are not null)
     constexpr T f(fa / (fb * fd));
     constexpr T o(- od / fd);
-    T numerator = a.template getInStoredUnit();
-    T denominator = b.template getInStoredUnit();
+    T numerator = a.getInStoredUnit();
+    T denominator = b.getInStoredUnit();
     return DstType::wrap(f * (numerator + (oa / fa)) / (denominator + (ob / fb)) + o);
   }
 };
