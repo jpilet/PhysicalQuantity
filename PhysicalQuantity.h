@@ -257,6 +257,7 @@ public:
   static T apply(T x) {return x;}
 };
 
+// A unit system defines in what units quantities are stored.
 namespace UnitSystem {
   struct SI {
 #define MAKE_SI_UNIT(name, siUnit, t, l, a, m, T, I, N, J) \
@@ -265,11 +266,13 @@ FOREACH_QUANTITY(MAKE_SI_UNIT)
 #undef MAKE_SI_UNIT
   };
 
-  // Suitable for integer and fixed-point representation
-  struct CustomAnemoUnits : public SI {
-    static const Unit Time = Unit::millisecond;
-    static const Unit Angle = Unit::degree;
-    static const Unit Velocity = Unit::knot;
+  struct DefaultSystem : public UnitSystem::SI {
+    // This define the storage units for all quantities.
+    // It is possible to override the SI.
+    // For example, if you want to store time in milliseconds,
+    // you can add:
+    //
+    // static const Unit Time = Unit::millisecond;
   };
 };
 
@@ -534,17 +537,17 @@ PhysicalQuantity<T, System, QUANTITY_ARGS> operator*(T s,
 // Definitions for SI base quantities (plus angles)
 
 // http://en.cppreference.com/w/cpp/language/type_alias
-template <typename T=double, typename System=UnitSystem::CustomAnemoUnits>
+template <typename T=double, typename System=UnitSystem::DefaultSystem>
 using Dimensionless = PhysicalQuantity<T, System, 0, 0, 0, 0, 0, 0, 0, 0>;
 
 #define MAKE_TYPE_ALIAS(name, siUnit, t, l, a, m, T, I, N, J) \
-template <typename Storage=double, typename System=UnitSystem::CustomAnemoUnits> \
+template <typename Storage=double, typename System=UnitSystem::DefaultSystem> \
 using name = PhysicalQuantity<Storage, System, t, l, a, m, T, I, N, J>;
 
 FOREACH_QUANTITY(MAKE_TYPE_ALIAS)
 #undef MAKE_TYPE_ALIAS
 
-template <typename Storage=double, typename System=UnitSystem::CustomAnemoUnits>
+template <typename Storage=double, typename System=UnitSystem::DefaultSystem>
 using Duration = Time<Storage, System>;
 
 template <typename T, typename sys, QUANTITY_TEMPLATE>
@@ -729,7 +732,7 @@ static physical_quantity::PhysicalQuantity<Storage, System, t / 2, l / 2, a / 2,
 
 namespace physical_quantity {
 
-template <typename T, typename System = UnitSystem::CustomAnemoUnits>
+template <typename T, typename System = UnitSystem::DefaultSystem>
 class HorizontalMotion : public Vectorize<Velocity<T, System>, 2> {
   public:
     typedef Velocity<T, System> InnerType;
