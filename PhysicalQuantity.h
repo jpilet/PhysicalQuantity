@@ -64,6 +64,7 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
 
 #define FOREACH_LENGTH_UNIT(OP) \
   FOREACH_SI_PREFIX(OP, Length, meter, 1) \
+  FOREACH_SI_PREFIX(OP, Length, metre, 1) \
   OP(Length, nauticalMile, 1852.0, 0) // 1 nautical mile = 1852.0 m
 
 #define FOREACH_ANGLE_UNIT(OP) \
@@ -96,12 +97,16 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
 
 #define FOREACH_VELOCITY_UNIT(OP) \
   OP(Velocity, meterPerSecond, 1.0, 0) \
+  OP(Velocity, metrePerSecond, 1.0, 0) \
   OP(Velocity, knot, 1852.0/3600.0, 0) \
   OP(Velocity, kilometerPerHour, 1000.0/3600.0, 0) \
+  OP(Velocity, kilometrePerHour, 1000.0/3600.0, 0) \
+  OP(Velocity, milePerHour, 1609.344/3600.0, 0)
   OP(Velocity, milePerHour, 1609.0/3600.0, 0)
 
 #define FOREACH_ACCELERATION_UNIT(OP) \
-  OP(Acceleration, meterPerSecondSquared, 1.0, 0)
+  OP(Acceleration, meterPerSecondSquared, 1.0, 0) \
+  OP(Acceleration, metrePerSecondSquared, 1.0, 0) \
 
 #define FOREACH_UNIT(OP) \
   FOREACH_TIME_UNIT(OP) \
@@ -115,7 +120,7 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   FOREACH_TEMPERATURE_UNIT(OP) \
   FOREACH_AMOUNT_OF_SUBSTANCE_UNIT(OP) \
   FOREACH_LUMINOUS_INTENSITY_UNIT(OP) \
-  OP(Frequency, herz, 1, 0) \
+  OP(Frequency, hertz, 1, 0) \
   OP(Frequency, becquerel, 1, 0) \
   OP(Force, newton, 1, 0) \
   OP(Pressure, pascal, 1, 0) \
@@ -133,8 +138,11 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(AbsorbedDose, gray, 1, 0) \
   OP(CatalyticActivity, katal, 1, 0) \
   OP(Area, squareMeter, 1, 0) \
+  OP(Area, squareMetre, 1, 0) \
   OP(Volume, cubicMeter, 1, 0) \
-  OP(Volume, litre, 1000, 0)
+  OP(Volume, cubicMetre, 1, 0) \
+  OP(Volume, litre, 1e-3, 0) \
+  OP(Volume, liter, 1e-3, 0)
 
 //                               s  m    kg  K  A mol cd
 #define FOREACH_QUANTITY(OP) \
@@ -149,7 +157,7 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(AngularVelocity, radianPerSecond, -1, 0, 1, 0, 0, 0, 0, 0) \
   OP(Velocity, meterPerSecond, -1, 1, 0, 0, 0, 0, 0, 0) \
   OP(Acceleration, meterPerSecondSquared, -2, 1, 0, 0, 0, 0, 0, 0) \
-  OP(Frequency, herz,           -1, 0, 0, 0, 0, 0, 0, 0) \
+  OP(Frequency, hertz,           -1, 0, 0, 0, 0, 0, 0, 0) \
   OP(Force, newton,             -2, 1, 0, 1, 0, 0, 0, 0) \
   OP(Pressure, pascal,          -2,-1, 0, 1, 0, 0, 0, 0) \
   OP(Energy, joule,             -2, 2, 0, 1, 0, 0, 0, 0) \

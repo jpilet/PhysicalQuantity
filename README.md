@@ -18,8 +18,8 @@ Here's an example:
   // Then my speed is
   Velocity<double> velC = length / time;
 
-  std::cout << "My walking speed: " << velC.metersPerSecond() << "m/s, "
-   << velC.kilometersPerHour() << "km/h, "
+  std::cout << "My walking speed: " << velC.meterPerSecond() << "m/s, "
+   << velC.kilometerPerHour() << "km/h, "
    << velC.knots() << " knots.\n";
 ```
 
@@ -37,6 +37,8 @@ to know its nature (a length, a duration, a voltage,...).
 
 
 # What quantities/units are supported?
+
+Most of SI and part of the imperial system are supported, with both British (meter) and American (meter) spellings.
 
 See the [full list](./UNITS.md)
 
