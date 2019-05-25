@@ -40,3 +40,11 @@ add_executable(PhysicalQuantityTest PhysicalQuantity.h PhysicalQuantityTest.cpp)
 target_link_libraries(PhysicalQuantityTest gtest gmock_main)
 add_test(NAME PhysicalQuantityTest COMMAND PhysicalQuantityTest)
 
+add_executable(list_units list_units.cc)
+
+add_custom_target(UNITS.md ALL
+    COMMENT Building UNITS.md
+    OUTPUT  UNITS.md
+    COMMAND list_units
+    DEPENDS list_units
+)
