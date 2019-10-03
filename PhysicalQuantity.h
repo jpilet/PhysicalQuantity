@@ -65,6 +65,14 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
 #define FOREACH_LENGTH_UNIT(OP) \
   FOREACH_SI_PREFIX(OP, Length, meter, 1) \
   FOREACH_SI_PREFIX(OP, Length, metre, 1) \
+  /* https://en.wikipedia.org/wiki/Imperial_units#Length */ \
+  OP(Length, inch, 0.0254, 0) \
+  OP(Length, foot, 0.3048, 0) \
+  OP(Length, yard, 0.9144, 0) \
+  OP(Length, chain, 20.1168, 0) \
+  OP(Length, furlong, 201.168, 0) \
+  OP(Length, mile, 1609.344, 0) \
+  OP(Length, league, 4828.032, 0) \
   OP(Length, nauticalMile, 1852.0, 0) // 1 nautical mile = 1852.0 m
 
 #define FOREACH_ANGLE_UNIT(OP) \
@@ -73,6 +81,9 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
 
 #define FOREACH_MASS_UNIT(OP) \
   FOREACH_SI_PREFIX(OP, Mass, gram, 1000) \
+  /* https://en.wikipedia.org/wiki/Imperial_units#Length */ \
+  OP(Mass, pound, 0.45359237, 0) \
+  OP(Mass, stone, 6.35029318, 0) \
   OP(Mass, skeppund, 170.0 , 0) \
   OP(Mass, lispund, (170.0)/20, 0)
 
@@ -102,7 +113,6 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(Velocity, kilometerPerHour, 1000.0/3600.0, 0) \
   OP(Velocity, kilometrePerHour, 1000.0/3600.0, 0) \
   OP(Velocity, milePerHour, 1609.344/3600.0, 0)
-  OP(Velocity, milePerHour, 1609.0/3600.0, 0)
 
 #define FOREACH_ACCELERATION_UNIT(OP) \
   OP(Acceleration, meterPerSecondSquared, 1.0, 0) \
@@ -139,10 +149,16 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(CatalyticActivity, katal, 1, 0) \
   OP(Area, squareMeter, 1, 0) \
   OP(Area, squareMetre, 1, 0) \
+  OP(Area, acre, 4046.8564224, 0) \
   OP(Volume, cubicMeter, 1, 0) \
   OP(Volume, cubicMetre, 1, 0) \
   OP(Volume, litre, 1e-3, 0) \
-  OP(Volume, liter, 1e-3, 0)
+  OP(Volume, liter, 1e-3, 0) \
+  OP(Volume, gill, 0.1420653125, 0) \
+  OP(Volume, pint, 0.56826125, 0) \
+  OP(Volume, quart, 1.1365225, 0) \
+  OP(Volume, gallon, 4.54609, 0)
+
 
 //                               s  m    kg  K  A mol cd
 #define FOREACH_QUANTITY(OP) \
