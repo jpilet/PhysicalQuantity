@@ -24,6 +24,11 @@
 #include <sstream>
 #include <string>
 
+// Some headers in windows define this macro. We have to undef it to compile.
+#ifdef pascal
+#undef pascal
+#endif
+
 namespace physical_quantity {
 
 #define QUANTITY_TEMPLATE \
@@ -108,15 +113,12 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
 
 #define FOREACH_VELOCITY_UNIT(OP) \
   OP(Velocity, meterPerSecond, 1.0, 0) \
-  OP(Velocity, metrePerSecond, 1.0, 0) \
   OP(Velocity, knot, 1852.0/3600.0, 0) \
   OP(Velocity, kilometerPerHour, 1000.0/3600.0, 0) \
-  OP(Velocity, kilometrePerHour, 1000.0/3600.0, 0) \
   OP(Velocity, milePerHour, 1609.344/3600.0, 0)
 
 #define FOREACH_ACCELERATION_UNIT(OP) \
-  OP(Acceleration, meterPerSecondSquared, 1.0, 0) \
-  OP(Acceleration, metrePerSecondSquared, 1.0, 0) \
+  OP(Acceleration, meterPerSecondSquared, 1.0, 0)
 
 #define FOREACH_UNIT(OP) \
   FOREACH_TIME_UNIT(OP) \
@@ -135,6 +137,7 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(Force, newton, 1, 0) \
   OP(Pressure, pascal, 1, 0) \
   OP(Energy, joule, 1, 0) \
+  OP(Energy, electronvolt, 1.602176634e-19, 0) \
   OP(Power, watt, 1, 0) \
   OP(ElectricCharge, coulomb, 1, 0) \
   OP(Voltage, volt, 1, 0) \
@@ -157,7 +160,8 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(Volume, gill, 0.1420653125, 0) \
   OP(Volume, pint, 0.56826125, 0) \
   OP(Volume, quart, 1.1365225, 0) \
-  OP(Volume, gallon, 4.54609, 0)
+  OP(Volume, gallon, 4.54609, 0) \
+  OP(Dimensionless, ratio, 1, 0)
 
 
 //                               s  m    kg  K  A mol cd
@@ -190,7 +194,8 @@ template <typename T, typename System, QUANTITY_TEMPLATE> class PhysicalQuantity
   OP(AbsorbedDose, gray,        -2, 2, 0, 0, 0, 0, 0, 0) \
   OP(CatalyticActivity, katal,  -1, 2, 0, 0, 0, 0, 1, 0) \
   OP(Area, squareMeter,          0, 2, 0, 0, 0, 0, 0, 0) \
-  OP(Volume, cubicMeter,         0, 3, 0, 0, 0, 0, 0, 0)
+  OP(Volume, cubicMeter,         0, 3, 0, 0, 0, 0, 0, 0) \
+  OP(Dimensionless, ratio,       0, 0, 0, 0, 0, 0, 0, 0)
 
 
 enum class Quantity {
@@ -844,7 +849,8 @@ typename std::enable_if<std::is_floating_point<T>::value, bool>::type isFinite(T
 template <typename T, typename System, QUANTITY_TEMPLATE>
 PhysicalQuantity<T, System, QUANTITY_ARGS>
 PhysicalQuantity<T, System, QUANTITY_ARGS>::fabs() const {
-  return ThisType(::fabs(_x));
+	using namespace std; // This way, the compiler can choose between std::abs and ceres::abs.
+  return ThisType(abs(_x));
 }
 
 template <typename T, typename System, QUANTITY_TEMPLATE>
